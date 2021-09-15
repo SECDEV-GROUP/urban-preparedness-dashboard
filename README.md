@@ -49,7 +49,7 @@
 
 ## Introduction
 
-This document will walk you through the process of deploying your own local version of the Urban Pandemic Preparedness Dashboard (referred to as UPPD or ‘the application’).
+This document will walk you through the process of deploying your own local version of the [Urban Pandemic Preparedness Dashboard](https://urbanresilience.secdev.com/) (referred to as UPPD or ‘the application’).
 
 For your convenience, we have provided a `main` git branch that includes all assets required to run the application for Los Angeles. There is also a `clean` branch that has cleared out all example information for users wishing to deploy their own version of the tool.
 
