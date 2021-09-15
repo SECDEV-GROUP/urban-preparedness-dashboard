@@ -53,6 +53,8 @@ This document will walk you through the process of deploying your own local vers
 
 For your convenience, we have provided a `main` git branch that includes all assets required to run the application for Los Angeles. There is also a `clean` branch that has cleared out all example information for users wishing to deploy their own version of the tool.
 
+You can view a live demo of the Los Angeles dashboard [here](https://urbanresilience.secdev.com/los-angeles)
+
 Below are the full requirements for the index and asset files to be compatible with our deployment package as well as examples and instructions for customizing the tool. Please note that the guide below assumes you have already completed the index calculations in a structure somewhat similar to our own - please see the methodology documents [in this directory](https://github.com/SECDEV-GROUP/urban-preparedness-dashboard/tree/main/uppd-application/src/assets) for details on our index methodology.
 
 If you have any questions about deploying your UPPD with additional customization or require assistance with data integration beyond the scope of this document, please contact the SecDev Group at [secdev@secdev.com](mailto:secdev@secdev.com)
