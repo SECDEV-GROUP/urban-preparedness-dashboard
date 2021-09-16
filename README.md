@@ -90,7 +90,7 @@ There are three main types of data files, all of which are located in the `uppd-
 - Spaces, hyphens, capital letters, or other characters may cause errors when initializing the database or when connecting the database to the app.
 - Keep track of the names of the columns you would like to show on the front end of the application
 
-#### Assets / Points of Interest
+### Assets / Points of Interest
 
 - These files are to enable a view that includes important landmarks
 - Files should be separated by landmark type - for example, libraries and hospitals would be in separate .csv files
@@ -101,7 +101,7 @@ There are three main types of data files, all of which are located in the `uppd-
 - Note the name of the label column for use with uppd-application later.
 - Files must be .csv files located in uppd-database/docker/data/csv/assets
 
-#### Primary Index
+### Primary Index
 
 - The primary dataset to be visualized - in our demo, this is the UPPD Index Score or Risk Score. It is also referred to as `city_metrics` in the database
 - Aside from the points of interest and shapefile, all data that should be included in the dashboard should be in the index files.
@@ -116,7 +116,7 @@ There are three main types of data files, all of which are located in the `uppd-
 - The database expects a column called `source_date` with dates in the format YYYY-MM-DD or MM/DD/YYYY.
 - Take note of the columns which have data you will want to display on the front end. Consult the methodology documents in `uppd-application/src/assets` for details about how we organized the column names and calculated the values for our deployments
 
-#### Shapefile
+### Shapefile
 
 - Must be named `city_geography.shp` and be located in `uppd-database/docker/data/shapefile`
 - Note the name of the column with the id for the regions to match with the indices. If it is not ‘tractce’, update `uppd-database/src/sql/views/05_view_data.sql` on line 4 and put the column name after `g.`
