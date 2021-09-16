@@ -35,6 +35,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-wrap-multilines': 'off',
     'react/react-in-jsx-scope': 'off',
+    'react/jsx-no-bind': 'off',
     'import/no-cycle': 'off',
     'import/prefer-default-export': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
