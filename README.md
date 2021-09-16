@@ -47,19 +47,15 @@
   </tr>
 </table>
 
-##
-
-## Table of Contents
-
 ## Introduction
 
-This document will walk you through the process of deploying your own local version of the Urban Pandemic Preparedness Dashboard (referred to as UPPD or ‘the application’).
+This document will walk you through the process of deploying your own local version of the [Urban Pandemic Preparedness Dashboard](https://urbanresilience.secdev.com/) (referred to as UPPD or ‘the application’).
 
-For your convenience, we have provided a git branch that includes all assets required to run the application for Los Angeles. This is the main branch of the repository. There is also a ‘clean’ branch that contains additional parameters for configuration for non-US cities.
+For your convenience, we have provided a `main` git branch that includes all assets required to run the application for Los Angeles. There is also a `clean` branch that has cleared out all example information for users wishing to deploy their own version of the tool.
 
-If deploying for a city in the US or simply wishing to stand up a quick demo of the tool, we recommend using the main Los Angeles branch. If deploying for a non-US city with common names instead of census tract IDs, we recommend using the ‘clean’ branch.
+You can view a live demo of the Los Angeles dashboard [here](https://urbanresilience.secdev.com/los-angeles)
 
-Below are the full requirements for the index and asset files to be compatible with our deployment package as well as examples and instructions for customizing the tool.
+Below are the full requirements for the index and asset files to be compatible with our deployment package as well as examples and instructions for customizing the tool. Please note that the guide below assumes you have already completed the index calculations in a structure somewhat similar to our own - please see the methodology documents [in this directory](https://github.com/SECDEV-GROUP/urban-preparedness-dashboard/tree/main/uppd-application/src/assets) for details on our index methodology.
 
 If you have any questions about deploying your UPPD with additional customization or require assistance with data integration beyond the scope of this document, please contact the SecDev Group at [secdev@secdev.com](mailto:secdev@secdev.com)
 
@@ -68,7 +64,7 @@ If you have any questions about deploying your UPPD with additional customizatio
 - Docker Engine
 - Server running Ubuntu or Mac OS with >= 4GB RAM
 - Approximately 6 GB of hard drive space
-- A Mapbox API key with default permissions
+- A [Mapbox API key](https://docs.mapbox.com/help/getting-started/access-tokens/) with default permissions
 
 ## Environment
 
@@ -86,15 +82,15 @@ There are four main subdirectories, each representing a component of the applica
 
 ## Data File Requirements
 
-There are three main types of data files, all of which are located in the uppd-database/docker/data folder.
+There are three main types of data files, all of which are located in the `uppd-database/docker/data` folder.
 
-**All Data Files**
+### All Data Files
 
 - File names and column names must not contain any characters other than a-z (lowercase only), 0-9, and the underscore character (`_`)
 - Spaces, hyphens, capital letters, or other characters may cause errors when initializing the database or when connecting the database to the app.
 - Keep track of the names of the columns you would like to show on the front end of the application
 
-**Assets / Points of Interest**
+### Assets / Points of Interest
 
 - These files are to enable a view that includes important landmarks
 - Files should be separated by landmark type - for example, libraries and hospitals would be in separate .csv files
@@ -105,30 +101,30 @@ There are three main types of data files, all of which are located in the uppd-d
 - Note the name of the label column for use with uppd-application later.
 - Files must be .csv files located in uppd-database/docker/data/csv/assets
 
-**Primary Index**
+### Primary Index
 
-- The primary dataset to be visualized - in our demo, this is the UPPD Index Score or Risk Score. It is also referred to as ‘city_metrics’
+- The primary dataset to be visualized - in our demo, this is the UPPD Index Score or Risk Score. It is also referred to as `city_metrics` in the database
 - Aside from the points of interest and shapefile, all data that should be included in the dashboard should be in the index files.
-- Must be .csv files located in uppd-database/docker/data/csv/indices
-- The most recent index file should be called current_indices.csv
+- Must be .csv files located in `uppd-database/docker/data/csv/indices`
+- The most recent index file should be called `current_indices.csv`
   - Currently, this project does not support automatic data updates. This means that adding additional years of data to V1 of the application will require current_indices to be replaced and the database to be rebuilt
 - The most recent index file will be used to create the database table for the indices.
 - Any additional index files must have the same column names in the same order as current_indices, or data may be added inaccurately.
-- Additional index files should be called filename_YYYY_indices.csv, where YYYY is the year of data represented in the indices file
-- The database expects a column called ‘tractce10’ to be in current_indices to align with the shapefile.
-  - If you have a different column name for the main code or id used for the areas of interest (usually the smallest available unit, such as a census tract, neighborhood, or Lower-layer Super Output Areas (LSOAs)), adjust the name in uppd-database/src/sql/views/05_view_data.sql line 4, after the ‘m.’
-- The database expects a column called ‘source_date’ with dates in the format YYYY-MM-DD or MM/DD/YYYY.
-- Take note of the columns which have data you will want to display on the front end. Consult the methodology documents in uppd-application/src/assets for details about how we organized the column names and calculated the values for our deployments
+- Additional index files should be called `filename_YYYY_indices.csv`, where YYYY is the year of data represented in the indices file
+- The database expects a column called `tractce10` to be in current_indices to align with the shapefile.
+  - If you have a different column name for the main code or id used for the areas of interest (usually the smallest available unit, such as a census tract, neighborhood, or Lower-layer Super Output Areas (LSOAs)), adjust the name in `uppd-database/src/sql/views/05_view_data.sql` line 4, after the `m.`
+- The database expects a column called `source_date` with dates in the format YYYY-MM-DD or MM/DD/YYYY.
+- Take note of the columns which have data you will want to display on the front end. Consult the methodology documents in `uppd-application/src/assets` for details about how we organized the column names and calculated the values for our deployments
 
-**Shapefile**
+### Shapefile
 
-- Must be named city_geography.shp and be located in uppd-database/docker/data/shapefile
-- Note the name of the column with the id for the regions to match with the indices. If it is not ‘tractce’, update uppd-database/src/sql/views/05_view_data.sql on line 4 and put the column name after ‘g.’
+- Must be named `city_geography.shp` and be located in `uppd-database/docker/data/shapefile`
+- Note the name of the column with the id for the regions to match with the indices. If it is not ‘tractce’, update `uppd-database/src/sql/views/05_view_data.sql` on line 4 and put the column name after `g.`
 - If there are special characters in the shapefile that go beyond UTF-8, you may have to modify line 52 of uppd-database/docker/dbscripts/02-load-data.sh to change the character set used for the postgis database
 
-**Example Alteration: uppd-database/src/sql/views/05_view_data.sql **
+**Example Alteration: uppd-database/src/sql/views/05_view_data.sql**
 
-Default - the location id columns are assumed to be tractce10 in both the shapefile (city_geography.shp) and the indices files (current_indices.csv). The city_geography id column is changed to tractce using ALTER TABLE on lines 1-2 before creating the view to avoid errors due to the duplicate name
+Default - the location id columns are assumed to be `tractce10` in both the shapefile (city_geography.shp) and the indices files (current_indices.csv). The city_geography id column is changed to tractce using ALTER TABLE on lines 1-2 before creating the view to avoid errors due to the duplicate name
 
 ```
     ALTER TABLE city_geography
@@ -140,7 +136,7 @@ Default - the location id columns are assumed to be tractce10 in both the shapef
     WHERE m.tractce10::TEXT = g.tractce;
 ```
 
-Example after changing 05_view_data.sql for Amsterdam’s data files - the ALTER TABLE rename on lines 1-2 is no longer required since the columns already have two different names
+Example after changing 05_view_data.sql for Amsterdam’s data files - note that the ALTER TABLE rename on lines 1-2 is no longer required since the columns already have two different names
 
 ```
     CREATE VIEW view_data AS
@@ -175,9 +171,9 @@ Because special characters are included in the file, the character set is change
 
 ## Front End Application Configuration
 
-uppd-application/src/configuration contains three files for customizing the front end of the application.
+`uppd-application/src/configuration` contains three files for customizing the front end of the application.
 
-**Image Configuration**
+### 1. Image Configuration
 
 img-config.ts lines 1-25
 
@@ -200,7 +196,7 @@ export const InfoBackgroundImage = backgroundImageTwo;
 
 Image files can be placed in uppd-application/src/assets and be imported in img-config.ts to customize the logo in the top left corner of the application as well as the background images used on the main landing page (`AboutBackgroundImage`) and the info / methodology page (`InfoBackgroundImage`)
 
-**Color Configuration**
+### 2. Color Configuration
 
 theme-color-config.ts lines 4 - 67
 
@@ -273,14 +269,13 @@ export const lightTheme = createMuiTheme({
 
 This file allows you to customize the colours used in light and dark mode (`lightTheme` and `darkTheme`), as well as the colours used in the heatmap gradient (`mapGradientLight` and `mapGradientDark`). `step6` of the map gradient is the lightest colour, used to show the highest values of the index (lowest risk) and `step1` is the darkest colour, used to show the lowest values of the index (highest risk). `step1` and `step2` for the light and dark gradients are re-used in the themes for the overall application to provide colour coherence, but any of these values can be changed and replaced with a hex colour code.
 
-**Application Configuration**
+### 3. Application Configuration
 
 app-config.ts
 
 The bulk of the front end configuration happens in this file. Please be sure to review app-config carefully before deploying.
 
-    **mapAreaConfig **(lines 9-21)
-
+**mapAreaConfig** (lines 9-21)
 ```
     export const mapAreaConfig = {
      zoomLevel: 9,
@@ -296,15 +291,12 @@ The bulk of the front end configuration happens in this file. Please be sure to 
      },
     };
 ```
+  * This section allows the user to define the area that should be displayed by the map. `mapCenter` is the longitude and latitude for the central point on the first load of the map. `bounds` indicates the limits of the map using the bottom left and top right points.
 
-    This section allows the user to define the area that should be displayed by the map. `mapCenter` is the longitude and latitude for the central point on the first load of the map. `bounds` indicates the limits of the map using the bottom left and top right points.
-
-
-    `style` indicates the Mapbox style to use for the map in each of three ‘modes’ - dark, light, and satellite. You may use the styles provided or [see the Mapbox documentation](https://docs.mapbox.com/api/maps/styles/) for more details on creating your own styles.
+  * `style` indicates the Mapbox style to use for the map in each of three ‘modes’ - dark, light, and satellite. You may use the styles provided or [see the Mapbox documentation](https://docs.mapbox.com/api/maps/styles/) for more details on creating your own styles.
 
 
-    **filterScale** (lines 23-27)
-
+**filterScale** (lines 23-27)
 ```
     export const filterScale = {
      lowBound: 0,
@@ -313,53 +305,37 @@ The bulk of the front end configuration happens in this file. Please be sure to 
     };
 ```
 
-    This variable allows the user to set the bounds for the main index and main index subcategories. This is what is used to create the filterable ‘scale’ of index results on the main map page. Here it has been set to display 0 to 100 and allow users to step in increments of 1.
+   * This variable allows the user to set the bounds for the main index and main index subcategories. This is what is used to create the filterable ‘scale’ of index results on the main map page. Here it has been set to display 0 to 100 and allow users to step in increments of 1.
 
 
-    **Main Column Variables** (lines 29-31)
-
+**Main Column Variables** (lines 29-31)
 ```
     export const tractId = 'tractce10';
     export const primaryScore = 'secdev_res_plr';
     export const totalPopCol = 'tot_pop_e';
 ```
-
-    `tractId` is the name of the column to use for matching the region to its shape in the shapefile.
-
-
-    `primaryScore` is the name of the column with the overall index score - the main value to be displayed when a tract is selected.
+* `tractId` is the name of the column to use for matching the region to its shape in the shapefile.
+* `primaryScore` is the name of the column with the overall index score - the main value to be displayed when a tract is selected.
+* `totalPopCol` is the name of the column with the total population of a given region
 
 
-    `totalPopCol` is the name of the column with the total population of a given region
-
-
-    **Years of Data **(lines 33-35 main branch)
-
+**Years of Data** (lines 33-35 main branch)
 ```
     export const currentYear = 2019;
     export const availableYears: number[] = [2019, 2018, 2017];
     export const projectedYears: number[] = [];
 ```
+* `currentYear` is the most recent year of data available. We found that data was most rich for 2019 in most cities we have developed for so far.
+* `availableYears` is used to create the year slider.
+    * If only one year of data is available, put only one year between the brackets. 
+      *  You may also wish to remove the `DateSlider` component from the sidebar - see `uppd-application/src/components/sidebar/Sidebar.tsx` in the main branch and comment out `&lt;DateSlider />` on line 207 as well as the `DateSlider` import on line 26. 
+* `projectedYears` allows a warning message to be displayed when certain years are selected. This is to allow for data that has been created using predictive analysis of some kind. Any year that is not projected can be assumed to be real data rather than projected or interpolated data.
 
-    `currentYear` is the most recent year of data available. We found that data was most rich for 2019 in most cities we have developed for so far.
+**mapLayers** (lines 37 - 218)
+The mapLayers variable is a list of dictionary (or key: value) items, starting with the main index value (in our case, the Urban Pandemic Preparedness Index).
+Below are two key examples of these items:
 
-
-    `availableYears` is used to create the year slider.
-
-
-    If only one year of data is available, put only one year between the brackets. You may wish to remove the `DateSlider` component from the sidebar - see uppd-application/src/components/sidebar/Sidebar.tsx in the main branch and comment out `&lt;DateSlider />` on line 207 as well as the `DateSlider` import on line 26. `projectedYears` allows a warning message to be displayed when certain years are selected. This is to allow for data that has been created using predictive analysis of some kind. Any year that is not projected can be assumed to be real data rather than projected or interpolated data.
-
-
-    **mapLayers** (lines 37 - 218)
-
-
-    The mapLayers variable is a list of dictionary (or key: value) items, starting with the main index value (in our case, the Urban Pandemic Preparedness Index).
-
-
-    Below are two key examples of these items:
-
-
-    Line 38-42 -** Main index value**
+Line 38-42 - **Main index value**
 
 ```
     {
@@ -368,12 +344,10 @@ The bulk of the front end configuration happens in this file. Please be sure to 
        subcategories: [],
      },
 ```
+* Note that no subcategories are listed for the main value - this is because they are listed as separate dictionary items in the rest of the list. `title` is what will be displayed on the dropdown menu and sidebar for this item and `colName` is the column in the index file that contains the data.
 
-    Note that no subcategories are listed for the main value - this is because they are listed as separate dictionary items in the rest of the list. `title` is what will be displayed on the dropdown menu and sidebar for this item and `colName` is the column in the index file that contains the data.
 
-
-    Lines 43-55 -** Economic factors**
-
+Lines 43-55 - **Economic factors**
 ```
     {
        title: 'Economic Factors',
@@ -389,17 +363,12 @@ The bulk of the front end configuration happens in this file. Please be sure to 
        ],
      },
 ```
-
-    Here we have four subcategories or metrics listed in the Economic Factors section. When the ‘Economic Factors’ section is clicked in the sidebar, a section will appear showing the individual metrics in this category. `title` will display on the sidebar as the label for the value in the column defined in `colName`.
-
-
-    The user can add as many or as few of these dictionary items as they would like to display. Currently, no additional number formatting is available, so it may be useful to state in words if a value is a percentage or not, as shown in the example above.
+* Here we have four subcategories or metrics listed in the Economic Factors section. When the ‘Economic Factors’ section is clicked in the sidebar, a section will appear showing the individual metrics in this category. `title` will display on the sidebar as the label for the value in the column defined in `colName`.
+* The user can add as many or as few of these dictionary items as they would like to display. Currently, no additional number formatting is available, so it may be useful to state in words if a value is a percentage or not, as shown in the example above.
 
 
-    **radarChartConfig **(lines 220-236)
-
-
-    The radar or spider chart is used to display the main category values relative to one another in order to view which aspects a particular region may be stronger or weaker in than others. Each of the main
+**radarChartConfig** (lines 220-236)
+The radar or spider chart is used to display the main category values relative to one another in order to view which aspects a particular region may be stronger or weaker in than others. These are the categories defined in `mapLayers` that have subcategories.
 
 ```
     export const radarChartConfig: RadarChartDataType = {
@@ -420,14 +389,11 @@ The bulk of the front end configuration happens in this file. Please be sure to 
      ],
     };
 ```
-
-    Because of the small space available for the radar chart labels, some `title`s have been abbreviated. The `colName`s should match the `colName` used for that subcategory in the `mapLayers` variable discussed above.
-
-
-    **linearCharts** (lines 239-264)
+* Because of the small space available for the radar chart labels, some `title`s have been abbreviated. The `colName`s should match the `colName` used for that subcategory in the `mapLayers` variable discussed above.
 
 
-    These charts can be used to display the relative numbers of binary groups. In our Los Angeles example, we used Under and Over 65 and Male and Female linear charts. See the Age Distribution chart code below.
+**linearCharts** (lines 239-264)
+These charts can be used to display the relative numbers of binary groups. In our Los Angeles example, we used Under and Over 65 and Male and Female linear charts. See the Age Distribution chart code below.
 
 ```
     export const linearCharts: LinearChartDataType[] = [
@@ -443,20 +409,13 @@ The bulk of the front end configuration happens in this file. Please be sure to 
          right: 'Over 65',
        },
 ```
-
-    `title` is the main label for the chart and `chartId` provides an id for this component.
-
-
-    `data` contains two data columns: the `totalPopulation` column (defined above in totalPopCol variable) and the secondaryCount, which is currently assumed to be a percentage value. I.e. the column named `age65p_pe` contains the percentage of people over 65 in that region.
+* `title` is the main label for the chart and `chartId` provides an id for this component.
+* `data` contains two data columns: the `totalPopulation` column (defined above in totalPopCol variable) and the secondaryCount, which is currently assumed to be a percentage value. I.e. the column named `age65p_pe` contains the percentage of people over 65 in that region.
+* `labels` are used to label each side of the chart. Here, the left will be the ‘primaryCount’ (calculated by the application) - the percentage of people under 65 and the right will be our `secondaryCount` defined above.
 
 
-    `labels` are used to label each side of the chart. Here, the left will be the ‘primaryCount’ (calculated by the application) - the percentage of people under 65 and the right will be our `secondaryCount` defined above.
-
-
-    **racialDistInfo** (lines 266-291)
-
-
-    This displays the percentage of people in a region belonging to racial or ethnic categories defined in the main indices dataset. As many of these categories can be displayed as needed. Below is a brief example.
+**racialDistInfo** (lines 266-291)
+This displays the percentage of people in a region belonging to racial or ethnic categories defined in the main indices dataset. As many of these categories can be displayed as needed. Below is an abbreviated example.
 
 ```
     export const racialDistInfo: RacialDistDataType[] = [
@@ -469,15 +428,12 @@ The bulk of the front end configuration happens in this file. Please be sure to 
        colName: 'white',
      },
 ```
-
-    The `title` is used to label the value in `colName`, which is assumed to be already in percentage format. A tooltip explaining the origins of the category names and that the values may add to more than 100%  is included in uppd-application/src/components/Sidebar/CensusInfo/RacialDistro.tsx on line 38 - different regions may define racial and ethnic groups differently, so changes to this tooltip may help the user understand where the groupings are coming from.
-
-
-    **PointsOfInterest **(lines 293-348)
+* The `title` is used to label the value in `colName`, which is assumed to be already in percentage format. 
+* A tooltip explaining the origins of the category names and that the values may add to more than 100% is included in `uppd-application/src/components/Sidebar/CensusInfo/RacialDistro.tsx` on line 38 - different regions may define racial and ethnic groups differently, so changes to this tooltip may help the user understand where the groupings are coming from.
 
 
-    This is where you tell the front end application which points of interest you added to the database. You can have as many or as few as you like.
-
+**PointsOfInterest** (lines 293-348)
+This is where you tell the front end application which points of interest you added to the database. You can have as many or as few as you like.
 ```
     export const PointsOfInterest: PointsOfInterestType[] = [
      {
@@ -493,20 +449,14 @@ The bulk of the front end configuration happens in this file. Please be sure to 
        nameField: 'name',
      },
 ```
+* `title` is the label to display in the toggle dropdown for points of interest.
+* `endpoint` is the name of the csv file you added to the database’s csv asset folder without the `.csv` extension. So in this example, the file with the hospital locations was called `hospitals_and_medical_centers.csv`.
+* `icon` is the name of a maki icon - you can find the full icon set [here](https://labs.mapbox.com/maki-icons/) and [here](https://openclipart.org/tag/maki-icons). The number after the dash handles sizing in pixels - so here, the library icon is set to appear smaller than the hospital icon.
+* `nameField` is the column name in the original csv file that contains the name of the location you would like to have displayed when that point is selected.
 
-    `title` is the label to display in the toggle dropdown for points of interest.
-
-
-    `endpoint` should be the name of the csv file you added to the database’s csv asset folder without the `.csv` extension. So in this example, the file with the hospital locations was called `hospitals_and_medical_centers.csv`.
-
-
-    `icon` should be the name of a maki icon - you can find the full icon set [here](https://labs.mapbox.com/maki-icons/) and [here](https://openclipart.org/tag/maki-icons). The number after the dash handles sizing in pixels - so here, the library icon is set to appear smaller than the hospital icon.
+Finally, on line 350 of app-config.ts there is a `sidebarText` variable. If desired, users can add a sentence or two of text here (without formatting) and it will display in the sidebar.
 
 
-    `nameField` is the column name in the original csv file that contains the name of the location you would like to have displayed when that point is selected.
-
-
-    Finally, on line 350 of app-config.ts there is a `sidebarText` variable. If desired, users can add a sentence or two of text here (without formatting) and it will display in the sidebar.
 
 ## Local Deployment Checklist
 
@@ -520,9 +470,8 @@ The bulk of the front end configuration happens in this file. Please be sure to 
 8. Add changed passwords to uppd-tile-server/.env so it can access uppd-database
 9. Verify data files fit the requirements detailed above
    1. Shapefile, city_geography.shp
-   2. Asset files, \*various.csv
-   3. Index files, at least
-   4. current_indices.csv
+   2. Asset or point of interest files, .csv
+   3. Index files, at least current_indices.csv
 10. Add custom images, if desired, to uppd-application/src/assets and ensure they are imported in uppd-application/src/configuration/img-config.ts 5. navLogo sets the branding image in the top left corner 6. backgroundImageOne sets the main landing page or About page background 7. backgroundImageTwo sets the Info / Methodology page background
 11. Use google maps or another mapping service to get the `mapCenter` and `bounds` to use in `uppd-application/src/configuration/app-config.ts` (line 12-15) and `uppd-tile-server/html/index.html` (line 34). If using google maps, reverse the order of the numbers - google uses (latitude, longitude) and mapbox uses (longitude, latitude).
 12. Populate the values in lines 29 - 46 of 1uppd-application/src/configuration/app-config.ts1 using the column names from your current_indices.csv file. See Front End Application Configuration above for details.
@@ -541,12 +490,12 @@ The bulk of the front end configuration happens in this file. Please be sure to 
 
 ## Troubleshooting
 
-    * Use `uppd-database/data_check.py` to run some preliminary tests on your data files before standing up the application for the first time (please note that this is only a quick script meant for people familiar with coding and will field many changes back to the user)
-    * Running `npm run start` from the command line in the uppd-application directory will stand up a version of the front end at localhost:3000. It can still access the tile server and database as long as they are still running.
-        * If you have not done so before, you should run `npm install` first to ensure all appropriate packages are installed.
-        * `npm run start` can be used to check changes made to the front end only, such as changes to `app-config.ts`, as it will create a hot-loading instance of the application.
-    * If the database is built with inaccurate data, remove the image using ‘docker rm database’ and re-build once the data has been corrected
-    * If changes have been made to different parts of the program, it may be helpful to stop all uppd images and run ‘docker system prune’ to clean them up before rebuilding
-    * If a production deploy is desired, be sure to
-        * Search all directories for `localhost` and change as appropriate
-        * Ensure that all database credentials have been changed appropriately
+* Use `uppd-database/data_check.py` to run some preliminary tests on your data files before standing up the application for the first time (please note that this is only a quick script meant for people familiar with coding and will field many changes back to the user)
+* Running `npm run start` from the command line in the uppd-application directory will stand up a version of the front end at `localhost:3000`. It can still access the tile server and database as long as they are still running.
+    * If you have not done so before, you should run `npm install` first to ensure all appropriate packages are installed.
+    * `npm run start` can be used to check changes made to the front end only, such as changes to `app-config.ts`, as it will create a hot-loading instance of the application.
+* If the database is built with inaccurate data, remove the image using `docker rm database` and re-build once the data has been corrected
+* If changes have been made to different parts of the program, it may be helpful to stop all uppd images and run `docker system prune` to clean them up before rebuilding
+* If a production deploy is desired, be sure to
+    * Search all directories for `localhost` and change as appropriate
+    * Ensure that all database credentials have been changed appropriately
