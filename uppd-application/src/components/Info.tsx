@@ -7,7 +7,7 @@ import { InfoBackgroundImage } from '../configuration/img-config';
 import { componentSizing } from '../services/component-sizing';
 import InfoPageContainer from './BaseUIComponents/InfoPageContainer';
 import { AppState } from '../types';
-import MethodPdf from '../assets/secdev_group_us_cities_methodology.pdf';
+import MethodPdf from '../assets/secdev_group_us_cities_methodology.pdf';  // *** CHANGE FOR ALTERNATIVE INDICES
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,7 +30,8 @@ const Info: React.FC = () => {
   const darkTheme: boolean = useSelector(
     (state: AppState) => state.AppControl.darkTheme,
   );
-
+  
+  // *** Changes to the text below will be needed for alternative indices
   return (
     <InfoPageContainer image={InfoBackgroundImage}>
       <Container>

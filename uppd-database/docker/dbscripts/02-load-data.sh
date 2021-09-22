@@ -46,6 +46,7 @@ echo "done loading csv indices data." 2>&1 | tee -a $logData
 
 echo "Load shapefiles..." 2>&1 | tee -a $logData
 
+# *** Please see root README for information about possible changes needed to the below
 for f in $(ls /usr/local/data/shapefile/*.shp); do
     echo "  loading shapefile data $f..." 2>&1 | tee -a $logData
     NAME=`echo $f | sed 's:.*/::' | cut -d'.' -f1`

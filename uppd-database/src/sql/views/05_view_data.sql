@@ -1,3 +1,4 @@
+-- *** Please see README for info about changes that may be required to this file ***
 ALTER TABLE city_geography
 RENAME COLUMN tractce10 to tractce;
 

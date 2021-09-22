@@ -1,9 +1,9 @@
 // main logo used at the top left corner
-import navLogo from '../assets/appBranding/Seal_of_Los_Angeles.svg';
+import navLogo from '***LOGO_LOCATION***';
 
 // Background images
-import backgroundImageOne from '../assets/img/background-image.jpg';
-import backgroundImageTwo from '../assets/img/la-bg2.jpg';
+import backgroundImageOne from '***BG_IMAGE_ONE***'; // used for main landing page
+import backgroundImageTwo from '***BG_IMAGE_TWO***'; // used for methods page
 
 // secdev logo for light and dark mode
 import sdgLogoWhite from '../assets/appBranding/secdevanalytics_white.png';

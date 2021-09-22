@@ -37,12 +37,13 @@ export const About: React.FC = () => {
     (state: AppState) => state.AppControl.darkTheme,
   );
 
+  // *** Changes to the text below may be needed for alternative indices
   return (
     <InfoPageContainer image={AboutBackgroundImage}>
       <Container>
         <Grid container spacing={1} className={classes.AboutContainer}>
           <Grid item xs={12} md={6}>
-            <h1 className={classes.SectionHeader}>Los Angeles</h1>
+            <h1 className={classes.SectionHeader}>***CITY_NAME***</h1>
             <h2 className={classes.IntroHeader}>
               Pandemic Preparedness and Recovery Dashboard
             </h2>
@@ -55,7 +56,7 @@ export const About: React.FC = () => {
               population groups.{' '}
             </Typography>
             <Typography variant="body1" gutterBottom>
-              This demo uses open source data from Los Angeles, California.{' '}
+              This demo uses open source data from ***CITY_NAME***.{' '}
               <br />
               To find out how to deploy your own UPPD, reach out to{' '}
               <Link

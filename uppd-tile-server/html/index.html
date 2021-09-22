@@ -26,12 +26,12 @@
     <div id="map"></div>
     <script>
         mapboxgl.accessToken =
-            "MAPBOX_API_TOKEN";
+            "***MAPBOX_API_TOKEN***";
         var map = new mapboxgl.Map({
             container: "map",
             style: "mapbox://styles/mapbox/light-v10",
             zoom: 10,
-            center: [-118.249328, 34.062712]
+            center: [***LONGITUDE, LATTITUDE***]
         });
 
         map.on("load", function () {
@@ -40,7 +40,7 @@
                 type: "fill",
                 source: {
                     type: "vector",
-                    tiles: ["https://secdev.urbanresilience.com/api/layers/indices/2019/{z}/{x}/{y}"],
+                    tiles: ["http://localhost/layers/indices/2019/{z}/{x}/{y}"], // ***change 2019 to current_year if needed
                     minzoom: 0,
                     maxzoom: 22
                 },
@@ -49,36 +49,6 @@
                     "fill-color": "green",
                     "fill-outline-color": "black",
                     "fill-opacity": .25
-                }
-            });
-            map.addLayer({
-                id: "2018",
-                type: "fill",
-                source: {
-                    type: "vector",
-                    tiles: ["https://secdev.urbanresilience.com/api/layers/indices/2018/{z}/{x}/{y}"],
-                    minzoom: 0,
-                    maxzoom: 22
-                },
-                "source-layer": "tile",
-                paint: {
-                    "fill-color": "blue",
-                    "fill-outline-color": "black",
-                    "fill-opacity": .25
-                }
-            });
-            map.addLayer({
-                id: "campgrounds",
-                type: "circle",
-                source: {
-                    type: "vector",
-                    tiles: ["https://secdev.urbanresilience.com/api/layers/assets/campgrounds/{z}/{x}/{y}"],
-                    minzoom: 0,
-                    maxzoom: 22
-                },
-                "source-layer": "tile",
-                paint: {
-                    "circle-color": "green"
                 }
             });
         });
