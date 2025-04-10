@@ -1,3 +1,5 @@
+> This repository has been archived and is in readonly mode
+
 # UPPD Application Deployment Guide
 
 ### Version 1.0
